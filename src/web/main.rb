@@ -1,11 +1,13 @@
 module TINYmoirai::Web
   class Main < TINYmoirai::Web::Base
     get '/' do
-      "Hello world"
+      @welcome = "Hello world"
+      slim :index
     end
 
     get '/secured' do
-      "I'm very secured."
+      @welcome = "I'm very secured."
+      slim :secured
     end
   end
 end

@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'slim'
 
 if ENV['RACK_ENV'].nil? || %w(development test).include?(ENV['RACK_ENV'])
   require "sinatra/reloader"
