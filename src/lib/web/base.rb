@@ -5,6 +5,7 @@ module TINYmoirai
       before do
         content_type :html
       end
+      enable :sessions
 
       configure :development do
         register Sinatra::Reloader
