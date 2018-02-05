@@ -20,7 +20,7 @@ module TINYmoirai
       private
 
       def serialize(data)
-        data.to_s
+        data.to_json
       end
 
       def publish(data)

@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'slim'
 require 'bunny'
+require 'json'
 
 if ENV['RACK_ENV'].nil? || %w(development test).include?(ENV['RACK_ENV'])
   require "sinatra/reloader"
