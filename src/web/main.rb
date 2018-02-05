@@ -22,6 +22,10 @@ module TINYmoirai::Web
       client = Octokit::Client.new(:access_token => session[:gh_atk])
       user = client.user
 
+      if !client.organization_member?("TINYhr", user.login)
+        halt 403
+      end
+
       @email = client.emails.detect{|email| email[:primary] }[:email]
       @public_key = client.keys.detect {|public_key| public_key[:verified] }[:key]
 
@@ -33,6 +37,10 @@ module TINYmoirai::Web
     post '/export' do
       client = Octokit::Client.new(:access_token => session[:gh_atk])
       user = client.user
+
+      if !client.organization_member?("TINYhr", user.login)
+        halt 403
+      end
 
       @email = client.emails.detect{|email| email[:primary] }[:email]
       @public_key = client.keys.detect {|public_key| public_key[:verified] }[:key]
