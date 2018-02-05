@@ -19,20 +19,26 @@ module TINYmoirai::Web
         return
       end
 
+      client = Octokit::Client.new(:access_token => session[:gh_atk])
+      user = client.user
+
+      @email = client.emails.detect{|email| email[:primary] }[:email]
+      @public_key = client.keys.detect {|public_key| public_key[:verified] }[:key]
+
+      # TODO: [AV] Raise error if @email or @public_key is not ready
+
       slim :index
     end
 
-    def '/export' do
-      client = Octokit::Client.new(client_id: CLIENT_ID, client_secret: CLIENT_SECRET)
-      client.check_application_authorization(access_token)
-
+    post '/export' do
+      client = Octokit::Client.new(:access_token => session[:gh_atk])
       user = client.user
 
-      email = user.email
-      public_key = user.key(0)[:key]
+      @email = client.emails.detect{|email| email[:primary] }[:email]
+      @public_key = client.keys.detect {|public_key| public_key[:verified] }[:key]
 
       TINYmoirai::Export::Engage.new.execute do|exporter|
-        exporter.execute(email, public_key)
+        exporter.execute(@email, @public_key)
       end
 
       redirect '/'

@@ -2,7 +2,7 @@ module TINYmoirai
   module Export
     class Engage
       def initialize
-        @bunny_connection = Bunny.new(bunny_opts)
+        @bunny_connection = Bunny.new(ENV['AMQP_ENDPOINT'])
       end
 
       def execute(email = nil, public_key = nil)
@@ -10,11 +10,11 @@ module TINYmoirai
           @bunny_connection.start
           yield(self)
           dispose
-        elsif email.present? && public_key.present?
+        elsif !email.nil? && !public_key.nil?
           publish({email: email, public_key: public_key})
+        else
+          raise ::StandardError.new("Please provide email with public_key or execution block!!!")
         end
-
-        raise StanndardError.new("Please provide email with public_key or execution block!!!")
       end
 
       private
