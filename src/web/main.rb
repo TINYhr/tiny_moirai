@@ -22,6 +22,22 @@ module TINYmoirai::Web
       slim :index
     end
 
+    def '/export' do
+      client = Octokit::Client.new(client_id: CLIENT_ID, client_secret: CLIENT_SECRET)
+      client.check_application_authorization(access_token)
+
+      user = client.user
+
+      email = user.email
+      public_key = user.key(0)[:key]
+
+      TINYmoirai::Export::Engage.new.execute do|exporter|
+        exporter.execute(email, public_key)
+      end
+
+      redirect '/'
+    end
+
     get '/login' do
       client = Octokit::Client.new
       url = client.authorize_url(CLIENT_ID, :scope => 'user:email,read:public_key,read:org,read:gpg_key')
