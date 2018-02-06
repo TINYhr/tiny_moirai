@@ -1,9 +1,28 @@
 p Well, hello there!
 p
-  form method="post" action="/export"
-    |Click&nbsp;
-    input type="submit" value="here"
-    |&nbsp;to export and send to to email&nbsp;
-    b = @email
-    |&nbsp; and encrypt with public_key:
-    pre = "#{@public_key[0..10]}...#{@public_key[-10..-1]}"
+  - if @email.nil?
+    p Cannot read email, Seems you don't authorize app to read your email. Please check again.
+    p
+      |Click&nbsp;
+      a href="/logout" title="Log out" here
+      |&nbsp; to logout, deauthorize app TINYpulseOps from your github account then try again.
+  - elsif @public_key.nil?
+    p You dont have any SSH key or don't authorize app to use your SSH key.
+    p
+      |Click&nbsp;
+      a href="/logout" title="Log out" here
+      |&nbsp; to logout, deauthorize app TINYpulseOps from your github account then try again.
+    p
+      |Read&nbsp;
+      a href="https://help.github.com/articles/connecting-to-github-with-ssh/"
+        |https://help.github.com/articles/connecting-to-github-with-ssh/
+      |&nbsp;for setup github SSH instruction
+
+  - else
+    form method="post" action="/export"
+      |Click&nbsp;
+      input type="submit" value="here"
+      |&nbsp;to export and send to to email&nbsp;
+      b = @email
+      |&nbsp; and encrypt with public_key:
+      pre = "#{@public_key[0..10]}...#{@public_key[-10..-1]}"

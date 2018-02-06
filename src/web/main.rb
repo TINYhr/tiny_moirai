@@ -26,10 +26,19 @@ module TINYmoirai::Web
         halt 403
       end
 
-      @email = client.emails.detect{|email| email[:primary] }[:email]
-      @public_key = client.keys.detect {|public_key| public_key[:verified] }[:key]
+      primary_email = client.emails.detect{|email| email[:primary] }
+      @email = if primary_email.nil?
+                  nil
+                else
+                  primary_email[:email]
+                end
 
-      # TODO: [AV] Raise error if @email or @public_key is not ready
+      first_verified_public_key = client.keys.detect {|public_key| public_key[:verified] }
+      @public_key = if primary_email.nil?
+                  nil
+                else
+                  first_verified_public_key[:key]
+                end
 
       slim :index
     end
@@ -42,8 +51,23 @@ module TINYmoirai::Web
         halt 403
       end
 
-      @email = client.emails.detect{|email| email[:primary] }[:email]
-      @public_key = client.keys.detect {|public_key| public_key[:verified] }[:key]
+      primary_email = client.emails.detect{|email| email[:primary] }
+      @email = if primary_email.nil?
+                  nil
+                else
+                  primary_email[:email]
+                end
+
+      first_verified_public_key = client.keys.detect {|public_key| public_key[:verified] }
+      @public_key = if primary_email.nil?
+                  nil
+                else
+                  first_verified_public_key[:key]
+                end
+
+      if @public_key.nil? || @email.nil?
+        halt 400
+      end
 
       TINYmoirai::Export::Engage.new.execute do|exporter|
         exporter.execute(@email, @public_key)
@@ -57,6 +81,12 @@ module TINYmoirai::Web
       url = client.authorize_url(CLIENT_ID, :scope => 'user:email,read:public_key,read:org,read:gpg_key')
 
       redirect url
+    end
+
+    get '/logout' do
+      session[:gh_atk] = nil
+
+      redirect '/'
     end
 
     get '/callback' do
