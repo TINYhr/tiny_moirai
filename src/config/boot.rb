@@ -24,6 +24,12 @@ files = [lib_files, model_files, init_files, core_files, web_files]
 
 Dir.glob(files).each {|lf| require lf }
 
+if ENV['RACK_ENV'] == 'production'
+  log = File.new("tmp/production.log", "a+")
+  $stdout.reopen(log)
+  $stderr.reopen(log)
+end
+
 configure do
   set :server, :thin
 end
