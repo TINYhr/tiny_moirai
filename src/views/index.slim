@@ -6,7 +6,7 @@ p
       |Click&nbsp;
       a href="/logout" title="Log out" here
       |&nbsp; to logout, deauthorize app TINYpulseOps from your github account then try again.
-  - elsif @public_key.nil?
+  - elsif @fingerprint.nil?
     p You dont have any SSH key or don't authorize app to use your SSH key.
     p
       |Click&nbsp;
@@ -24,5 +24,5 @@ p
       input type="submit" value="here"
       |&nbsp;to export and send to to email&nbsp;
       b = @email
-      |&nbsp; and encrypt with public_key:
-      pre = "#{@public_key[0..10]}...#{@public_key[-10..-1]}"
+      |&nbsp; and encrypt with public key fingerprint:
+      pre = "#{@fingerprint}"

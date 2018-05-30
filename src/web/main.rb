@@ -1,7 +1,6 @@
 module TINYmoirai::Web
   class Main < TINYmoirai::Web::Base
     get '/' do
-
       user = begin
                 TINYmoirai::GithubAuthenticator.new(session)
               rescue TINYmoirai::GithubAuthenticator::Unauthorized
@@ -9,7 +8,9 @@ module TINYmoirai::Web
               end
 
       @email = user.email
-      @public_key = user.public_key
+      @fingerprint = if !user.public_key.nil?
+                        SSHKey.fingerprint(user.public_key)
+                      end
 
       slim :index
     end
@@ -22,7 +23,11 @@ module TINYmoirai::Web
         exporter.execute(user.email, user.public_key)
       end
 
-      redirect '/'
+      redirect '/export'
+    end
+
+    get '/exported' do
+      slim :reported
     end
 
     get '/login' do

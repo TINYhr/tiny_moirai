@@ -13,6 +13,7 @@ gem 'pg'
 gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'rake'
+gem 'sshkey'
 
 group :development, :test do
   gem 'dotenv'
