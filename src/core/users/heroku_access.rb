@@ -1,4 +1,4 @@
-module Tp::Core::Users
+module TINYmoirai::Core::Users
   class HerokuAccess
     def initialize(user)
       @user = user

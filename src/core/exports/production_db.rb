@@ -1,4 +1,4 @@
-module Tp::Core::Exports
+module TINYmoirai::Core::Exports
   class ProductionDb
     def initialize(user)
       @user = user

@@ -1,4 +1,4 @@
-module Tp
+module TINYmoirai
   module Core
     module Exports
     end

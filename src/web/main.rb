@@ -1,119 +1,44 @@
 module TINYmoirai::Web
   class Main < TINYmoirai::Web::Base
     get '/' do
-      if session[:gh_atk].nil?
-        redirect '/login'
-        return
-      end
 
-      access_token = session[:gh_atk]
-      scopes = []
+      user = begin
+                TINYmoirai::GithubAuthenticator.new(session)
+              rescue TINYmoirai::GithubAuthenticator::Unauthorized
+                redirect '/login'
+              end
 
-      client = Octokit::Client.new(client_id: CLIENT_ID, client_secret: CLIENT_SECRET)
-      begin
-        client.check_application_authorization(access_token)
-      rescue => e
-        session[:access_token] = nil
-
-        redirect '/login'
-        return
-      end
-
-      client = Octokit::Client.new(:access_token => session[:gh_atk])
-      user = client.user
-
-      if !client.organization_member?("TINYhr", user.login)
-        halt 403
-      end
-
-      primary_email = client.emails.detect{|email| email[:primary] }
-      @email = if primary_email.nil?
-                  nil
-                else
-                  primary_email[:email]
-                end
-
-      first_verified_public_key = client.keys.detect {|public_key| public_key[:verified] }
-      @public_key = if primary_email.nil?
-                  nil
-                else
-                  first_verified_public_key[:key]
-                end
+      @email = user.email
+      @public_key = user.public_key
 
       slim :index
     end
 
     post '/export' do
-      client = Octokit::Client.new(:access_token => session[:gh_atk])
-      user = client.user
-
-      if !client.organization_member?("TINYhr", user.login)
-        halt 403
-      end
-
-      primary_email = client.emails.detect{|email| email[:primary] }
-      @email = if primary_email.nil?
-                  nil
-                else
-                  primary_email[:email]
-                end
-
-      first_verified_public_key = client.keys.detect {|public_key| public_key[:verified] }
-      @public_key = if primary_email.nil?
-                  nil
-                else
-                  first_verified_public_key[:key]
-                end
-
-      if @public_key.nil? || @email.nil?
-        halt 400
-      end
+      user = TINYmoirai::GithubAuthenticator.new(session)
+      halt 403 unless user.valid?
 
       TINYmoirai::Export::Engage.new.execute do|exporter|
-        exporter.execute(@email, @public_key)
+        exporter.execute(user.email, user.public_key)
       end
 
       redirect '/'
     end
 
     get '/login' do
-      client = Octokit::Client.new
-      url = client.authorize_url(CLIENT_ID, :scope => 'user:email,read:public_key,read:org,read:gpg_key')
-
-      redirect url
+      redirect ::TINYmoirai::GithubAuthenticator.login_url
     end
 
     get '/logout' do
-      session[:gh_atk] = nil
-
+      ::TINYmoirai::GithubAuthenticator.logout(session)
       redirect '/'
     end
 
     get '/callback' do
-      if request.env['rack.request.query_hash']['code'].nil?
-        redirect '/login'
-        return
-      end
-
-      session_code = request.env['rack.request.query_hash']['code']
-      result = Octokit.exchange_code_for_token(session_code, CLIENT_ID, CLIENT_SECRET)
-      access_token = result[:access_token]
-
-      session[:gh_atk] = access_token
-
-      client = Octokit::Client.new(:access_token => session[:gh_atk])
-      begin
-        current_user = client.user
-      rescue Octokit::Unauthorized
-        redirect '/login'
-        return
-      end
-
-      if !client.organization_member?("TINYhr", client.user.login)
-        halt 403
-      end
-
-      redirect '/'
+      TINYmoirai::GithubAuthenticator.authenticate(session,
+                                                   request.env['rack.request.query_hash']['code'],
+                                                   -> { redirect '/' },
+                                                   -> { halt 403 })
     end
   end
 end

@@ -1,4 +1,4 @@
-module Tp
+module TINYmoirai
   module Core
     class User
       def initialize(user)
