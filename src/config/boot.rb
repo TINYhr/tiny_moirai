@@ -14,12 +14,13 @@ app_dir = File.expand_path("./../", File.dirname(__FILE__))
 require File.join(app_dir, 'config/application')
 
 lib_files = File.join(app_dir, %w(lib ** *.rb))
+model_files = File.join(app_dir, %w(models ** *.rb))
 
 init_files = File.join(app_dir, %w(initializers ** *.rb))
 core_files = File.join(app_dir, %w(core ** *.rb))
 web_files = File.join(app_dir, %w(web ** *.rb))
 
-files = [lib_files, init_files, core_files, web_files]
+files = [lib_files, model_files, init_files, core_files, web_files]
 
 Dir.glob(files).each {|lf| require lf }
 

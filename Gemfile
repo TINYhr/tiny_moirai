@@ -9,6 +9,11 @@ gem "octokit", "~> 4.0"
 gem 'slim'
 gem 'bunny'
 
+gem 'pg'
+gem 'activerecord'
+gem 'sinatra-activerecord'
+gem 'rake'
+
 group :development, :test do
   gem 'dotenv'
   gem 'thin'

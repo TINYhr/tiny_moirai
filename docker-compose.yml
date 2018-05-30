@@ -8,3 +8,13 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=rabbit
       - RABBITMQ_DEFAULT_PASS=carrot
+  postgresql:
+    container_name: tp_moirai_postgresql_container
+    image: postgres:10.4-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: tp_moirai_development
