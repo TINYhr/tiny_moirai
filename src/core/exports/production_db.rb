@@ -1,16 +1,20 @@
-module TINYmoirai::Core::Exports
-  class ProductionDb
-    def initialize(user)
-      @user = user
-    end
+module TINYmoirai
+  module Core
+    module Exports
+      class ProductionDb
+        def initialize(user)
+          @user = user
+        end
 
-    def self.status
-    end
+        def self.status
+        end
 
-    def status
-    end
+        def status
+        end
 
-    def create
+        def create
+        end
+      end
     end
   end
 end

@@ -1,16 +1,20 @@
-module TINYmoirai::Core::Users
-  class HerokuAccess
-    def initialize(user)
-      @user = user
-    end
+module TINYmoirai
+  module Core
+    module Users
+      class HerokuAccess
+        def initialize(user)
+          @user = user
+        end
 
-    def create
-    end
+        def create
+        end
 
-    def destroy
-    end
+        def destroy
+        end
 
-    def status
+        def status
+        end
+      end
     end
   end
 end
