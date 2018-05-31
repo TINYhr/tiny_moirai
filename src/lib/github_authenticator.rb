@@ -3,15 +3,17 @@ module TINYmoirai
     ORGANIZATION_NAME = "TINYhr".freeze
     ORGANIZATION_EMAIL_PATTERN = /@tinypulse.com\z/
 
+    AUTH_KEY = :gh_atk
+
     def self.login_url
       Octokit::Client.new.authorize_url(Octokit.client_id, :scope => 'user:email,read:public_key,read:org,read:gpg_key')
     end
 
-    def self.logout(session)
-      session.delete(:gh_atk)
+    def self.logout
+      yield(AUTH_KEY) if block_given?
     end
 
-    def self.authenticate(session, session_code, success_handler, failure_handler)
+    def self.authenticate(session_code, success_handler, failure_handler)
       if session_code.nil?
         failure_handler.call
         return
@@ -19,7 +21,6 @@ module TINYmoirai
 
       result = Octokit.exchange_code_for_token(session_code, Octokit.client_id, Octokit.client_secret)
       access_token = result[:access_token]
-      session[:gh_atk] = access_token
 
       client = Octokit::Client.new(:access_token => access_token)
       begin
@@ -34,12 +35,11 @@ module TINYmoirai
         return
       end
 
-      success_handler.call
+      success_handler.call(AUTH_KEY, access_token)
     end
 
-    def initialize(session)
-      raise TINYmoirai::GithubAuthenticator::Unauthorized if session[:gh_atk].nil?
-      access_token = session[:gh_atk]
+    def initialize(access_token)
+      raise TINYmoirai::GithubAuthenticator::Unauthorized if access_token.nil?
 
       @client = Octokit::Client.new(:access_token => access_token)
       @client.check_application_authorization(access_token)
@@ -69,9 +69,6 @@ module TINYmoirai
 
     def valid?
       !email.nil? && !public_key.nil?
-    end
-
-    def authorize(session)
     end
 
     private
