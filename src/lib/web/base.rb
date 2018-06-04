@@ -6,7 +6,9 @@ module TINYmoirai
         content_type :html
       end
       # enable :sessions
-      use Rack::Session::Cookie, :key => "rack.session", :path => "/"
+      use Rack::Session::Cookie, :key => "rack.session",
+                                 :path => "/",
+                                 :secret => ENV['SECRET_TOKEN']
 
       configure :development do
         register Sinatra::Reloader
