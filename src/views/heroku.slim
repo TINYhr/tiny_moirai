@@ -1,0 +1,21 @@
+p
+  - if true #@email =~ /@tinypulse.com$/i
+    - if @access
+      p
+        |You could access from your terminal by:
+        pre
+          |ssh -p 2224 #{@login}@secret.tinypulse.io &lt;app-name&gt;
+      p
+        |Or tailing log
+        pre
+          |ssh -p 2225 #{@login}@secret.tinypulse.io &lt;app-name&gt;
+      p
+        |Using key with fingerprint:
+        pre=@fingerprint
+    - else
+      form method="post" action="/heroku"
+        |Click&nbsp;
+        input type="submit" value="here"
+        |&nbsp;to open access heroku app orver our proxy. After 1h inactive, session will be revoked.
+  - else
+    |Heroku proxy only accept account with TINYpulse email. To log and track identity.

@@ -58,6 +58,10 @@ module TINYmoirai
       end
     end
 
+    def login
+      @client.user.login
+    end
+
     def public_key
       first_verified_public_key = @client.keys.detect {|public_key| public_key[:verified] }
       @public_key = if first_verified_public_key.nil?
