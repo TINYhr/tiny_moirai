@@ -1,3 +1,1 @@
-ActiveRecord::Base.establish_connection(
-  "postgres://admin:mypassword@localhost/tp_moirai_development"
-)
+ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
