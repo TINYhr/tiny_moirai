@@ -13,5 +13,5 @@ amqp-consume -q "tpops.export.engage" --url=amqp://guest@127.0.0.1:5672 ~/onmess
 Queue on server to clean up Heroku flag in db
 
 ```bash
-bundle exec sneakers work HerokuDeregisterListener  --require src/listeners/all.rb
+bundle exec sneakers work HerokuDeregisteredListener  --require src/listeners/all.rb
 ```

@@ -32,7 +32,7 @@ module TINYmoirai
       end
 
       def queue
-        @queue ||= channel.queue("tpops.export.engage", :durable => true)
+        @queue ||= channel.queue(ENV['DBEXPORT_QUEUE_NAME'], :durable => true)
       end
 
       def channel

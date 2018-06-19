@@ -32,7 +32,7 @@ module TINYmoirai
       end
 
       def queue
-        @queue ||= channel.queue("tpops.heroku.register", :durable => true)
+        @queue ||= channel.queue(ENV['HEROKU_PROXY_CREATE_USER_QUEUE_NAME'], :durable => true)
       end
 
       def channel

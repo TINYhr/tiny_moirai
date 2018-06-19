@@ -17,12 +17,9 @@ require File.join(app_dir, 'config/application')
 
 lib_files = File.join(app_dir, %w(lib ** *.rb))
 model_files = File.join(app_dir, %w(models ** *.rb))
-
 init_files = File.join(app_dir, %w(initializers ** *.rb))
 core_files = File.join(app_dir, %w(core ** *.rb))
-listener_files = File.join(app_dir, %w(listeners ** *.rb))
-
-files = [lib_files, model_files, init_files, core_files, listener_files]
+files = [lib_files, model_files, init_files, core_files]
 
 Dir.glob(files).each {|lf| require lf }
 
@@ -37,5 +34,5 @@ Sneakers.configure  :runner_config_file => config_file,
                     :amqp => ENV['AMQP_ENDPOINT'],
                     :timeout_job_after => 60
 
-listener_files = File.join(app_dir, %w(listeners *.listener.rb))
+listener_files = File.join(app_dir, %w(listeners ** *.listener.rb))
 Dir.glob(listener_files).each {|lf| require lf }
