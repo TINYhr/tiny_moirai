@@ -63,3 +63,5 @@ openssl aes-256-cbc -d -in ${dump_cluster_identifier}.zip.enc -out ${dump_cluste
 mv ${dump_cluster_identifier}.zip ${HOME}/
 
 cd ${HOME} && rm -rf ${temp_dir}
+
+echo "Done. Please extract ${dump_cluster_identifier}.zip for exprted db."
