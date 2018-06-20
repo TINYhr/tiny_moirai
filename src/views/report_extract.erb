@@ -27,12 +27,7 @@ validate_dependencies() {
 
 get_private_key_file() {
   local default_private_key="${HOME}/.ssh/id_rsa"
-
-  echo "Please enter your private key file path which use to encrypt db snapshot."
-  echo "You could find its fingerprint on http://secret.tinypulse.io/export"
-  echo "Use command: \`ssh-keygen -E md5 -lf /path/to/private/key\` to get private key's fingerprint"
-  echo -n "Private key path [${default_private_key}]:"
-  read private_key_path
+  local private_key_path="$1"
 
   if [ "${private_key_path}" != "" ]; then
     PRIVATE_KEY_PATH="${private_key_path}"
@@ -53,7 +48,7 @@ get_private_key_file() {
 }
 
 validate_dependencies
-get_private_key_file
+get_private_key_file $1
 
 file_url="<%= @url %>"
 dump_cluster_identifier=`echo ${file_url} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1`
