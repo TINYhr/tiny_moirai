@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+PRIVATE_KEY_PATH=
+validate_dependencies() {
+  dependencies=( ssh-keygen openssl zip )
+  missed=()
+  for dep in "${dependencies[@]}"
+  do
+    which $dep > /dev/null
+    if [ $? -ne 0 ]; then
+      missed+=("${dep}")
+    fi
+  done
+
+  if [ ${#missed[@]} -gt 0 ]; then
+    echo -n "Missing dependencies: "
+    for dep in "${missed[@]}"
+    do
+      echo -n "${dep} "
+    done
+
+    echo "User apt/brew to install the dependencies before continue"
+
+    exit 1
+  fi
+}
+
+get_private_key_file() {
+  local default_private_key="${HOME}/.ssh/id_rsa"
+
+  echo "Please enter your private key file path which use to encrypt db snapshot."
+  echo "You could find its fingerprint on http://secret.tinypulse.io/export"
+  echo "Use command: \`ssh-keygen -E md5 -lf /path/to/private/key\` to get private key's fingerprint"
+  echo -n "Private key path [${default_private_key}]:"
+  read private_key_path
+
+  if [ "${private_key_path}" != "" ]; then
+    PRIVATE_KEY_PATH="${private_key_path}"
+
+    if [ -f "$PRIVATE_KEY_PATH" ]; then
+      return
+    else
+      echo "File not found: ${PRIVATE_KEY_PATH} Try default ${default_private_key}"
+      PRIVATE_KEY_PATH="${default_private_key}"
+    fi
+  fi
+
+  PRIVATE_KEY_PATH="${default_private_key}"
+  if [ ! -f "${PRIVATE_KEY_PATH}" ]; then
+    echo "Default file not found: ${PRIVATE_KEY_PATH} . Please enter correct private key path."
+    exit 2
+  fi
+}
+
+validate_dependencies
+get_private_key_file
+
+file_url="<%= @url %>"
+dump_cluster_identifier=`echo ${file_url} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1`
+
+temp_dir=`mktemp -d`
+mkdir -p ${temp_dir} && \
+cd ${temp_dir} && \
+wget -c ${file_url} && \
+unzip ${dump_cluster_identifier}.zip && \
+openssl rsautl -decrypt -oaep -inkey "${PRIVATE_KEY_PATH}" -in secret.key.enc -out secret.key && \
+openssl aes-256-cbc -d -in ${dump_cluster_identifier}.zip.enc -out ${dump_cluster_identifier}.zip -pass file:secret.key && \
+mv ${dump_cluster_identifier}.zip ${HOME}/
+
+cd ${HOME} && rm -rf ${temp_dir}

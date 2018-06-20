@@ -41,6 +41,13 @@ module TINYmoirai::Web
       slim :reported
     end
 
+    get '/export/extract' do
+      @url = params["url"]
+      halt 403 if !@url.match(/^http[s]*:\/\/s3.amazonaws.com\/tpops-reports\/export\/db\/[a-z0-9\/-]*\.zip$/)
+
+      erb :report_extract, layout: false
+    end
+
     get '/heroku' do
       @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
       halt 403 unless @user.valid?
