@@ -53,7 +53,7 @@ get_private_key_file $1
 file_url="<%= @url %>"
 dump_cluster_identifier=`echo ${file_url} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1`
 
-temp_dir=`mktemp -d`
+temp_dir=/tmp/tp-export/temp
 mkdir -p ${temp_dir} && \
 cd ${temp_dir} && \
 wget -c ${file_url} && \
