@@ -56,7 +56,7 @@ module TINYmoirai::Web
 
       local_user = ::User.find_by(email: @email)
       @fingerprint = local_user.fingerprint
-      @access = ::HerokuAccess.where(user_id: local_user.id).active.first
+      @access = ::HerokuAccess.where(user_id: local_user.id).ready.first
 
       @login = @email.split('@').first
 
@@ -68,8 +68,8 @@ module TINYmoirai::Web
       halt 403 unless @user.valid?
 
       local_user = ::User.find_by(email: @user.email)
+      access = ::HerokuAccess.where(user_id: local_user.id).ready.first
 
-      access = ::HerokuAccess.where(user_id: local_user.id).active.first
       if access.nil?
         ::HerokuAccess.create(user_id: local_user.id, created_at: Time.now)
         TINYmoirai::Heroku::Register.new.execute do|exporter|
