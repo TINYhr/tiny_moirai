@@ -1,6 +1,6 @@
 p
   - if true #@email =~ /@tinypulse.com$/i
-    - if @access
+    - if @active_access
       p
         |You could access from your terminal by:
         pre
@@ -12,6 +12,9 @@ p
       p
         |Using key with fingerprint:
         pre=@fingerprint
+    - elsif @waiting_access
+      p
+        |Session is creating. Pleas hold on. Thanks
     - else
       form method="post" action="/heroku"
         |Click&nbsp;

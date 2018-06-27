@@ -56,7 +56,8 @@ module TINYmoirai::Web
 
       local_user = ::User.find_by(email: @email)
       @fingerprint = local_user.fingerprint
-      @access = ::HerokuAccess.where(user_id: local_user.id).ready.first
+      @waiting_access = ::HerokuAccess.where(user_id: local_user.id).ready.first
+      @active_access = ::HerokuAccess.where(user_id: local_user.id).active.first
 
       @login = @email.split('@').first.gsub(".", "_")
 
