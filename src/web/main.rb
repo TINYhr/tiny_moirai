@@ -58,7 +58,7 @@ module TINYmoirai::Web
       @fingerprint = local_user.fingerprint
       @access = ::HerokuAccess.where(user_id: local_user.id).ready.first
 
-      @login = @email.split('@').first
+      @login = @email.split('@').first.gsub(".", "_")
 
       slim :heroku
     end
@@ -76,6 +76,7 @@ module TINYmoirai::Web
           exporter.execute(@user.email, @user.public_key)
         end
       end
+
 
       redirect '/heroku'
     end
