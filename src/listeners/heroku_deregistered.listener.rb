@@ -1,6 +1,6 @@
 class HerokuDeregisteredListener
   include Sneakers::Worker
-  from_queue ENV['HEROKU_PROXY_DELETED_USER_QUEUE_NAME'].to_sym
+  from_queue :"tpops.heroku_proxy.deleted_user"
 
 
   def work(msg)

@@ -1,6 +1,6 @@
 class HerokuRegisteredListener
   include Sneakers::Worker
-  from_queue ENV['HEROKU_PROXY_CREATED_USER_QUEUE_NAME'].to_sym
+  from_queue :"tpops.heroku_proxy.created_user"
 
 
   def work(msg)
