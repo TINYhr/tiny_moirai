@@ -10,8 +10,10 @@ p
         pre
           |ssh -p 2225 #{@login}@secret.tinypulse.io &lt;app-name&gt;
       p
-        |Using key with fingerprint:
-        pre=@fingerprint
+        ' Using key
+        strong => @active_access.public_key_title
+        ' with fingerprint:
+        pre = @active_access.fingerprint
     - elsif @waiting_access
       p
         ' Session is creating for
