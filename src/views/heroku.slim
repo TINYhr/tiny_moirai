@@ -14,11 +14,16 @@ p
         pre=@fingerprint
     - elsif @waiting_access
       p
-        |Session is creating. Pleas hold on. Thanks
+        ' Session is creating for
+        strong = @waiting_access.public_key_title
+        ' . Please hold on. Thanks
     - else
-      form method="post" action="/heroku"
-        |Click&nbsp;
-        input type="submit" value="here"
-        |&nbsp;to open access heroku app orver our proxy. After 1h inactive, session will be revoked.
+      p.hint Choose a public key to use to access Heroku app over proxy. Session is revoked after 1 hour.
+      form method="post" action="/heroku" style='width:200px'
+        .form-group
+          select.form-control name="public_key_title"
+            - @user.verified_keys.each do |title, key|
+              option = title
+        button.btn.btn-primary Choose Primary Key
   - else
     |Heroku proxy only accept account with TINYpulse email. To log and track identity.

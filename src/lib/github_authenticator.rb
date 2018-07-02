@@ -71,6 +71,15 @@ module TINYmoirai
                     end
     end
 
+    def verified_keys
+      @client.keys.select {|e| e[:verified]}.map{ |e| [e[:title], e[:key]] }.to_h
+    end
+
+    def find_public_key(title)
+      key = @client.keys.find { |e| e[:title] == title }
+      key && key[:key]
+    end
+
     def valid?
       !email.nil? && !public_key.nil?
     end
