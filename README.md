@@ -44,3 +44,12 @@ Queue on server to clean up Heroku flag in db
 ```bash
 bundle exec sneakers work HerokuDeregisteredListener  --require src/listeners/all.rb
 ```
+
+
+### ActiveRecord
+
+Generate a new migration
+
+```bash
+rake db:create_migration NAME=
+```
