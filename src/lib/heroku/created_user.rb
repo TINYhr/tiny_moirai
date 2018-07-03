@@ -1,19 +1,24 @@
+# NOTE: just a helper to fake sending a created_user message back to the app
+# Usage:
+# TINYmoirai::Heroku::CreatedUser.execute do |e|
+#   e.execute('user@example.com')
+# end
 module TINYmoirai
   module Heroku
-    class Register
+    class CreatedUser
       def initialize
         @bunny_connection = Bunny.new(ENV['AMQP_ENDPOINT'])
       end
 
-      def execute(email = nil, public_key = nil)
+      def execute(email = nil)
         if block_given?
           @bunny_connection.start
           yield(self)
           dispose
-        elsif !email.nil? && !public_key.nil?
-          publish({email: email, public_key: public_key})
+        elsif email
+          publish(email: email)
         else
-          raise ::StandardError.new("Please provide email with public_key or execution block!!!")
+          raise ::StandardError.new("Please provide email or execution block!!!")
         end
       end
 
@@ -24,7 +29,7 @@ module TINYmoirai
       end
 
       def publish(data)
-        publisher.publish(serialize(data), :routing_key => queue.name)
+        publisher.publish(serialize(data), routing_key: queue.name)
       end
 
       def publisher
@@ -32,7 +37,7 @@ module TINYmoirai
       end
 
       def queue
-        @queue ||= channel.queue('tpops.heroku_proxy.create_user', :durable => true)
+        @queue ||= channel.queue('tpops.heroku_proxy.created_user', durable: true)
       end
 
       def channel

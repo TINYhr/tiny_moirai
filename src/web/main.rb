@@ -56,8 +56,8 @@ module TINYmoirai::Web
 
       local_user = ::User.find_by(email: @email)
       @fingerprint = local_user.fingerprint
-      @waiting_access = ::HerokuAccess.where(user_id: local_user.id).ready.first
-      @active_access = ::HerokuAccess.where(user_id: local_user.id).active.first
+      @waiting_access = ::HerokuAccess.where(user_id: local_user.id).ready.last
+      @active_access = ::HerokuAccess.where(user_id: local_user.id).active.last
 
       @login = @email.split('@').first.gsub(".", "_")
 
@@ -71,10 +71,14 @@ module TINYmoirai::Web
       local_user = ::User.find_by(email: @user.email)
       access = ::HerokuAccess.where(user_id: local_user.id).ready.first
 
+      public_key_title = params['public_key_title']
+      public_key = @user.find_public_key(public_key_title)
+
       if access.nil?
-        ::HerokuAccess.create(user_id: local_user.id, created_at: Time.now)
+        ::HerokuAccess.create(user_id: local_user.id, created_at: Time.now,
+          public_key: public_key, public_key_title: public_key_title)
         TINYmoirai::Heroku::Register.new.execute do|exporter|
-          exporter.execute(@user.email, @user.public_key)
+          exporter.execute(@user.email, public_key)
         end
       end
 

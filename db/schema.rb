@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_30_043847) do
+ActiveRecord::Schema.define(version: 2018_07_02_163346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,8 @@ ActiveRecord::Schema.define(version: 2018_05_30_043847) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.boolean "active"
+    t.text "public_key"
+    t.string "public_key_title"
     t.index ["user_id"], name: "index_heroku_accesses_on_user_id"
   end
 

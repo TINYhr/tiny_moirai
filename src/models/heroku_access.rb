@@ -4,4 +4,8 @@ class HerokuAccess < ActiveRecord::Base
   scope :ready, -> { where(active: nil) }
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
+
+  def fingerprint
+    SSHKey.fingerprint(public_key)
+  end
 end
