@@ -13,7 +13,7 @@ end
 app_dir = File.expand_path("./../", File.dirname(__FILE__))
 
 # require File.join(app_dir, 'config/environment.rb')
-require File.join(app_dir, 'config/application')
+# require File.join(app_dir, 'config/application')
 
 lib_files = File.join(app_dir, %w(lib ** *.rb))
 model_files = File.join(app_dir, %w(models ** *.rb))

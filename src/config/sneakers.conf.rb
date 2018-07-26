@@ -1,10 +1,10 @@
 workers (ENV["WORKERS"] || 1).to_i
 
 before_fork do
-  Sneakers::logger.info " ** Init db connection ** "
+  ActiveRecord::Base.connection.disconnect!
 end
 
 
 after_fork do
-  Sneakers::logger.info " ** Close db connection ** "
+  ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 end
