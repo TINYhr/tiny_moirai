@@ -32,7 +32,11 @@ end
 config_file = File.join(app_dir, %w(config sneakers.conf.rb))
 Sneakers.configure  :runner_config_file => config_file,
                     :amqp => ENV['AMQP_ENDPOINT'],
-                    :timeout_job_after => 60
+                    :timeout_job_after => 60,
+                    :threads => 5,
+                    :workers => 4,
+                    :durable => true,
+                    :ack => true
 
 listener_files = File.join(app_dir, %w(listeners ** *.listener.rb))
 Dir.glob(listener_files).each {|lf| require lf }
