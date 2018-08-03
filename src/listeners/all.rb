@@ -40,3 +40,24 @@ Sneakers.configure  :runner_config_file => config_file,
 
 listener_files = File.join(app_dir, %w(listeners ** *.listener.rb))
 Dir.glob(listener_files).each {|lf| require lf }
+
+module Sneakers
+  module ActiveRecord
+    module ConnectionManagement
+      # https://github.com/jondot/sneakers/issues/302
+      # https://github.com/rails/rails/commit/c7b7c6ad1c773102753f1a11b857d0e37ceb6a21
+      def process_work(delivery_info, metadata, msg, handler)
+        super
+      ensure
+        ::ActiveRecord::Base.clear_active_connections!
+      end
+    end
+  end
+end
+
+module Sneakers
+  module Worker
+    logger.warn "Patch Sneakers::Worker to clear ActiveRecord connections"
+    prepend Sneakers::ActiveRecord::ConnectionManagement
+  end
+end
