@@ -34,7 +34,7 @@ Sneakers.configure  :runner_config_file => config_file,
                     :amqp => ENV['AMQP_ENDPOINT'],
                     :timeout_job_after => 60,
                     :threads => 5,
-                    :workers => 4,
+                    :workers => 3,
                     :durable => true,
                     :ack => true
 
