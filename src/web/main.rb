@@ -9,44 +9,44 @@ module TINYmoirai::Web
       slim :index
     end
 
-    get '/export' do
-      @user = begin
-                TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
-              rescue TINYmoirai::GithubAuthenticator::Unauthorized
-                redirect '/login'
-              end
+    # get '/export' do
+    #   @user = begin
+    #             TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
+    #           rescue TINYmoirai::GithubAuthenticator::Unauthorized
+    #             redirect '/login'
+    #           end
 
-      @email = @user.email
-      @fingerprint = if !@user.public_key.nil?
-                        SSHKey.fingerprint(@user.public_key)
-                      end
-      slim :export
-    end
+    #   @email = @user.email
+    #   @fingerprint = if !@user.public_key.nil?
+    #                     SSHKey.fingerprint(@user.public_key)
+    #                   end
+    #   slim :export
+    # end
 
-    post '/export' do
-      @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
-      halt 403 unless @user.valid?
+    # post '/export' do
+    #   @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
+    #   halt 403 unless @user.valid?
 
-      TINYmoirai::Export::Engage.new.execute do|exporter|
-        exporter.execute(@user.email, @user.public_key)
-      end
+    #   TINYmoirai::Export::Engage.new.execute do|exporter|
+    #     exporter.execute(@user.email, @user.public_key)
+    #   end
 
-      redirect '/exported'
-    end
+    #   redirect '/exported'
+    # end
 
-    get '/exported' do
-      @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
-      halt 403 unless @user.valid?
+    # get '/exported' do
+    #   @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
+    #   halt 403 unless @user.valid?
 
-      slim :reported
-    end
+    #   slim :reported
+    # end
 
-    get '/export/extract' do
-      @url = params["url"]
-      halt 403 if !@url.match(/^http[s]*:\/\/s3.amazonaws.com\/tpops-reports\/export\/db\/[a-z0-9\/-]*\.zip$/)
+    # get '/export/extract' do
+    #   @url = params["url"]
+    #   halt 403 if !@url.match(/^http[s]*:\/\/s3.amazonaws.com\/tpops-reports\/export\/db\/[a-z0-9\/-]*\.zip$/)
 
-      erb :report_extract, layout: false
-    end
+    #   erb :report_extract, layout: false
+    # end
 
     get '/heroku' do
       @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
