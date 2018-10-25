@@ -31,7 +31,7 @@ module TINYmoirai::Web
         exporter.execute(@user.email, @user.public_key)
       end
 
-      redirect '/exported'
+      redirect '/issueddb'
     end
 
     get '/issueddb' do
