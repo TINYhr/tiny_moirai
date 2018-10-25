@@ -1,4 +1,4 @@
-p Export censored production db to use in development
+p Clone censored production db to use in staging/pre-production
 p
   - if @fingerprint.nil?
     p You dont have any SSH key or don't authorize app to use your SSH key.
@@ -16,7 +16,7 @@ p
     form method="post" action="/export"
       |Click&nbsp;
       input type="submit" value="here"
-      |&nbsp;to export and send to to email&nbsp;
+      |&nbsp;to clone and send to to email&nbsp;
       b = @email
       |&nbsp; and encrypt with public key fingerprint:
       pre = "#{@fingerprint}"

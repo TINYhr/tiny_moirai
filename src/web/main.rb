@@ -9,6 +9,38 @@ module TINYmoirai::Web
       slim :index
     end
 
+    get '/issuedb' do
+      @user = begin
+                TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
+              rescue TINYmoirai::GithubAuthenticator::Unauthorized
+                redirect '/login'
+              end
+
+      @email = @user.email
+      @fingerprint = if !@user.public_key.nil?
+                        SSHKey.fingerprint(@user.public_key)
+                      end
+      slim :export
+    end
+
+    post '/issuedb' do
+      @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
+      halt 403 unless @user.valid?
+
+      TINYmoirai::Export::Engage.new.execute do|exporter|
+        exporter.execute(@user.email, @user.public_key)
+      end
+
+      redirect '/exported'
+    end
+
+    get '/issueddb' do
+      @user = TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
+      halt 403 unless @user.valid?
+
+      slim :reported
+    end
+
     # get '/export' do
     #   @user = begin
     #             TINYmoirai::GithubAuthenticator.new(session[TINYmoirai::GithubAuthenticator::AUTH_KEY])
